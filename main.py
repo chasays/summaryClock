@@ -1,7 +1,8 @@
 #!/usr/env python
 #coding: utf-8
 import xlrd
-
+from collections import Counter
+import bchart
 def get_week_day(date):
     weekday = date.weekday()
     return "星期" + str(weekday+1)
@@ -50,19 +51,42 @@ def excel_table_byname(file='1.xlsx', colnameindex =0, by_name=u'Sheet1'):
     #         list.append(app)
     return list
 
+
+def summaryWeek(lists):
+    res = dict(Counter(lists))
+    return res
+
+
+def showCharts(dict):
+    options = {
+        'chart': {'zoomType': 'xy'},
+        'title': {'text': '统计哪天容易出现忘打卡'},
+        'subtitle': {'text': '数据来源:每月月末考勤数据'},
+        'xAxis': {'categories': ['week']},
+        'yAxis': {'tilte': {'text': 'Times'}},
+        'plotOptions': {'column': {'dataLabels': {'enbaled': True}}}
+    }
+
 def main():
     # tables = excel_table_byindex()
     data = open_excel()
     table = data.sheet_by_index(0)
+    weeks = []
     for row in range(table.nrows):
         data1 = xlrd.xldate.xldate_as_datetime(table.cell(row, 0).value, 0)
-        print data1
-
-
+        weeks.append(get_week_day(data1))
+    return summaryWeek(weeks)
         # tables1 = excel_table_byname()
         # for row in tables1:
         #     print row
 
 if __name__=='__main__':
     # print get_week_day(datetime.datetime.now())
-    main()
+    dict1 = main()
+    from bchart import *
+
+    options = {"width": 500, "height": 500}
+    chart = AreaChart("#vis", options)
+    chart.load([['group1', '34', '54', '33'], ['group2', '53', '44', '65']]).legend('display', 'none').background(
+        'color', "#ffffff").colors(["#dd00dd", '#ffdd00']).option({"isStack": "true"})
+    chart.to_json()
