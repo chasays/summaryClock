@@ -22,7 +22,7 @@ def excel_table_byindex(file='1.xlsx', colnameindex=0, by_index=0):
     list = []
     for rownum in range(1, nrows):
         row = table.row_values(rownum)
-        data1 = xlrd.xldate.xldate_as_datetime(table.cell(0,0).value,1)
+        data1 = xlrd.xldate.xldate_as_datetime(table.cell(0,0).value,0)
         # if row:
         #     app = { }
         #     for i in range(len(colnames)):
@@ -51,13 +51,17 @@ def excel_table_byname(file='1.xlsx', colnameindex =0, by_name=u'Sheet1'):
     return list
 
 def main():
-    tables = excel_table_byindex()
-    for row in tables:
-        print row
+    # tables = excel_table_byindex()
+    data = open_excel()
+    table = data.sheet_by_index(0)
+    for row in range(table.nrows):
+        data1 = xlrd.xldate.xldate_as_datetime(table.cell(row, 0).value, 0)
+        print data1
 
-    # tables1 = excel_table_byname()
-    # for row in tables1:
-    #     print row
+
+        # tables1 = excel_table_byname()
+        # for row in tables1:
+        #     print row
 
 if __name__=='__main__':
     # print get_week_day(datetime.datetime.now())
