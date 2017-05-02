@@ -2,7 +2,7 @@
 #coding: utf-8
 import xlrd
 from collections import Counter
-import bchart
+from bchart import *
 def get_week_day(date):
     weekday = date.weekday()
     return "星期" + str(weekday+1)
@@ -83,11 +83,8 @@ def main():
 if __name__=='__main__':
     # print get_week_day(datetime.datetime.now())
     dict1 = main()
-    from bchart import *
 
     options = {"width": 500, "height": 500}
     chart = AreaChart("#vis", options)
     chart.load([['group1', '34', '54', '33'], ['group2', '53', '44', '65']]).legend('display', 'none').background(
         'color', "#ffffff").colors(["#dd00dd", '#ffdd00']).option({"isStack": "true"})
-    chart.to_json()
-    chart.
