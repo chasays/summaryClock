@@ -90,3 +90,4 @@ if __name__=='__main__':
     chart.load([['group1', '34', '54', '33'], ['group2', '53', '44', '65']]).legend('display', 'none').background(
         'color', "#ffffff").colors(["#dd00dd", '#ffdd00']).option({"isStack": "true"})
     chart.to_json()
+    chart.
