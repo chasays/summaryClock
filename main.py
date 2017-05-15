@@ -1,90 +1,107 @@
 #!/usr/env python
-#coding: utf-8
+# coding: utf-8
 import xlrd
 from collections import Counter
-from bchart import *
+import glob
+import os
+import sys
+
+
 def get_week_day(date):
     weekday = date.weekday()
-    return "星期" + str(weekday+1)
+    return "星期" + str(weekday + 1)
 
-def open_excel(file='1.xlsx'):
+
+def open_excel(file_name='1.xlsx'):
+    # type: (file) -> object
+    """
+
+    :type file_name: file = 1.xlsx
+    """
     try:
-        data = xlrd.open_workbook(file)
-        return  data
-    except Exception,e:
+        data = xlrd.open_workbook(file_name)
+        return data
+    except Exception, e:
         print str(e)
-#根据表索引
-def excel_table_byindex(file='1.xlsx', colnameindex=0, by_index=0):
-    data = open_excel(file)
+
+
+# 根据表索引
+def excel_table_byindex(file_name='1.xlsx', by_index=0):
+    data = open_excel(file_name)
     table = data.sheets()[by_index]
-    nrows = table.nrows #rows
-    ncols = table.ncols #cols
-    colnames = table.row_values(colnameindex) #某一行数据
-    list = []
+    nrows = table.nrows  # rows
+    lists = []
     for rownum in range(1, nrows):
         row = table.row_values(rownum)
-        data1 = xlrd.xldate.xldate_as_datetime(table.cell(0,0).value,0)
+        data1 = xlrd.xldate.xldate_as_datetime(table.cell(0, 0).value, 0)
         # if row:
         #     app = { }
         #     for i in range(len(colnames)):
         #         app[colnames[i]] = row[i]
-        list.append(data1)
-    return list
+        assert isinstance(data1, basestring)
+        lists.append(data1)
+    return lists
 
-#根据表名
-def excel_table_byname(file='1.xlsx', colnameindex =0, by_name=u'Sheet1'):
+
+# 根据表名
+def excel_table_byname(file='1.xlsx', by_name=u'Sheet1'):
+    """
+
+    :type by_name: sheet1
+    """
     data = open_excel(file)
     table = data.sheet_by_name(by_name)
     nrows = table.nrows
-    ncols = table.ncols
-    colnames = table.row_values(colnameindex)
-    list = []
     for i in range(nrows):
         l1 = table.row_values(i)
         list.append(l1)
-    # for rownum in range(1, nrows):
-    #     row = table.row_values(rownum)
-    #     if row:
-    #         app = { }
-    #         for i in range(len(colnames)):
-    #             app[colnames[i]] == row[i]
-    #         list.append(app)
     return list
 
 
-def summaryWeek(lists):
+def summary_week(lists):
     res = dict(Counter(lists))
     return res
 
 
-def showCharts(dict):
-    options = {
-        'chart': {'zoomType': 'xy'},
-        'title': {'text': '统计哪天容易出现忘打卡'},
-        'subtitle': {'text': '数据来源:每月月末考勤数据'},
-        'xAxis': {'categories': ['week']},
-        'yAxis': {'tilte': {'text': 'Times'}},
-        'plotOptions': {'column': {'dataLabels': {'enbaled': True}}}
-    }
-
 def main():
     # tables = excel_table_byindex()
-    data = open_excel()
-    table = data.sheet_by_index(0)
-    weeks = []
-    for row in range(table.nrows):
-        data1 = xlrd.xldate.xldate_as_datetime(table.cell(row, 0).value, 0)
-        weeks.append(get_week_day(data1))
-    return summaryWeek(weeks)
-        # tables1 = excel_table_byname()
-        # for row in tables1:
-        #     print row
 
-if __name__=='__main__':
+    datas = []
+    for fileName in read_all_xlsx():
+        datas.append(open_excel(fileName))
+
+    weeks = []
+    for data in datas:
+        table = data.sheet_by_index(0)
+        for row in range(table.nrows):
+            data1 = xlrd.xldate.xldate_as_datetime(table.cell(row, 0).value, 0)
+            weeks.append(get_week_day(data1))
+    return summary_week(weeks)
+    # tables1 = excel_table_byname()
+    # for row in tables1:
+    #     print row
+
+
+# 读取所有的xlsx文件
+def read_all_xlsx():
+    tmp_path = "{}/{}".format(cur_path(), "*.xlsx")
+
+    all_file_name = glob.glob(tmp_path)
+    return all_file_name
+
+
+# 判断当前路径
+def cur_path():
+    tmp_path = sys.argv[0]
+    if os.path.isdir(tmp_path):
+        return tmp_path
+    elif os.path.isfile(tmp_path):
+        return os.path.dirname(tmp_path)
+
+
+if __name__ == '__main__':
     # print get_week_day(datetime.datetime.now())
     dict1 = main()
-
-    options = {"width": 500, "height": 500}
-    chart = AreaChart("#vis", options)
-    chart.load([['group1', '34', '54', '33'], ['group2', '53', '44', '65']]).legend('display', 'none').background(
-        'color', "#ffffff").colors(["#dd00dd", '#ffdd00']).option({"isStack": "true"})
+    for _key in dict1:
+        print _key, dict1[_key]
+    read_all_xlsx()
