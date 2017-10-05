@@ -140,7 +140,7 @@ def TTGGames():
             gamename = list[0][3]
             name = list[0][1]
             code = int(list[0][2])
-            f.write('"img": "http://ams2-games.ttms.co/player/assets/images/games/{}.png",\n'.format(code))
+            f.write('"img": "/res/images/ttg/hot_slot_game/{}.png",\n'.format(code))
             f.write('"gamename": "{}",\n'.format(gamename))
             f.write('"name": "{}",\n'.format(name))
             f.write('"gametype": "0",\n')
@@ -202,7 +202,7 @@ if __name__ == '__main__':
     # print get_week_day(datetime.datetime.now())
     # PTGames()
     # modifyMGGames('modifyMG.js')
-    # TTGGames()
-    picLists = [14472, 14477, 14446, 14471, 14481, 14478, 14409, 14404, 14476, 14402, 14271, 14269, 14270, 14256, 14257,
-                14266, 14268, 14210, 14263, 14267]
-    batchDownloadTTGPNG(picLists)
+    TTGGames()
+    # picLists = [14472, 14477, 14446, 14471, 14481, 14478, 14409, 14404, 14476, 14402, 14271, 14269, 14270, 14256, 14257,
+    #             14266, 14268, 14210, 14263, 14267]
+    # batchDownloadTTGPNG(picLists)
